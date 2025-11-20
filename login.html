@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Water Pump Login & Signup</title>
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg-primary: #0f172a;
+    --bg-card: #1e293b;
+    --accent-primary: #3b82f6;
+    --accent-secondary: #2563eb;
+    --text-primary: #f8fafc;
+    --text-secondary: #cbd5e1;
+    --success: #22c55e;
+    --danger: #ef4444;
+  }
+
+  * { margin:0; padding:0; box-sizing:border-box; font-family:"Rajdhani", sans-serif; }
+
+  body {
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    min-height: 100vh;
+    padding: 80px 20px;
+  }
+
+  .header {
+    text-align: center;
+    margin-bottom: 40px;
+  }
+
+  .header h1 {
+    font-family:'Orbitron', sans-serif;
+    font-size: 2.8rem;
+    color: var(--accent-primary);
+    letter-spacing: 1px;
+    transition: all 0.3s ease;
+  }
+
+  .underline {
+    width: 100px;
+    height: 4px;
+    background: var(--accent-primary);
+    margin: 10px auto 20px;
+    border-radius: 5px;
+    box-shadow: 0 0 8px var(--accent-primary);
+  }
+
+  .header p {
+    color: var(--text-secondary);
+    font-size: 1rem;
+  }
+
+  .card {
+    width: 100%;
+    max-width: 550px;
+    background: var(--bg-card);
+    padding: 50px 40px;
+    border-radius: 20px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+  }
+
+  .switcher {
+    display:flex;
+    gap:10px;
+    margin-bottom:30px;
+  }
+
+  .switcher button {
+    flex:1;
+    padding: 14px 0;
+    border-radius: 25px;
+    border: 1px solid rgba(255,255,255,0.15);
+    color: var(--text-secondary);
+    background: rgba(255,255,255,0.05);
+    font-weight:600;
+    cursor:pointer;
+    transition: all 0.3s ease;
+  }
+
+  .switcher button:hover {
+    color: var(--accent-primary);
+    background: rgba(59,130,246,0.1);
+  }
+
+  .switcher .active {
+    background: var(--accent-primary);
+    color:#fff;
+  }
+
+  label {
+    display:block;
+    margin-bottom:6px;
+    color: var(--text-secondary);
+    font-size:0.9rem;
+    font-weight:500;
+  }
+
+  input, select {
+    width:100%;
+    padding:15px;
+    border-radius:10px;
+    border:none;
+    background: rgba(255,255,255,0.05);
+    color: var(--text-primary);
+    margin-bottom:20px;
+    font-size:1rem;
+    transition: all 0.2s ease;
+  }
+
+  input:focus, select:focus {
+    outline:none;
+    box-shadow: 0 0 8px var(--accent-primary);
+    background: rgba(255,255,255,0.08);
+  }
+
+  .btn {
+    width:100%;
+    padding:16px;
+    border-radius:25px;
+    border:none;
+    font-weight:600;
+    cursor:pointer;
+    background: var(--accent-primary);
+    color:#fff;
+    font-size:1rem;
+    transition: all 0.3s ease;
+  }
+
+  .btn:hover {
+    background: var(--accent-secondary);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(0,0,0,0.2);
+  }
+
+  .link-row {
+    display:flex;
+    justify-content:space-between;
+    margin-top:15px;
+    font-size:0.9rem;
+  }
+
+  .link-row a {
+    color: var(--accent-primary);
+    text-decoration:none;
+    cursor: pointer;
+  }
+
+  .link-row a:hover {
+    text-decoration: underline;
+  }
+
+  .hidden { display:none; }
+
+  .error, .successMsg {
+    padding:12px;
+    border-radius:10px;
+    margin-bottom:15px;
+    font-size:0.9rem;
+    text-align:center;
+    font-weight:500;
+  }
+
+  .error { background: rgba(239,68,68,0.15); color: var(--danger); }
+  .successMsg { background: rgba(34,197,94,0.15); color: var(--success); }
+
+</style>
+</head>
+<body>
+<div>
+  <div class="header">
+    <h1 id="formHeader">Login</h1>
+    <div class="underline"></div>
+    <p>Access or create your account</p>
+  </div>
+
+  <div class="card">
+
+    <!-- LOGIN FORM -->
+    <div id="loginSection">
+
+      <div class="switcher" style="margin-top: -10px;">
+        <button class="active" id="custLoginBtn">Customer Login</button>
+        <button id="vendLoginBtn">Vendor Login</button>
+      </div>
+
+      <div id="login-error" class="error hidden"></div>
+
+      <label>Email</label>
+      <input id="loginEmail" type="text" placeholder="Your Email" />
+
+      <label>Password</label>
+      <input id="loginPassword" type="password" placeholder="Your Password" />
+
+      <button class="btn" id="loginSubmit">Login</button>
+
+      <div class="link-row">
+        <a id="forgotPassword">Forgot Password?</a>
+        <a id="signupLink">New User? Sign Up</a>
+      </div>
+    </div>
+
+    <!-- SIGNUP FORM -->
+    <div id="signupSection" class="hidden">
+      <div id="signup-success" class="successMsg hidden"></div>
+      <div id="signup-error" class="error hidden"></div>
+
+      <label>Account Type</label>
+      <select id="signupType">
+        <option value="customer">Customer</option>
+        <option value="vendor">Vendor</option>
+      </select>
+
+      <label>Email</label>
+      <input id="signupEmail" type="text" placeholder="Create Email" />
+
+      <label>Password</label>
+      <input id="signupPassword" type="password" placeholder="Create Password" />
+
+      <button class="btn" id="signupSubmit">Create Account</button>
+
+      <div class="link-row" style="justify-content: flex-end;">
+        <a id="backToLogin">Back to Login</a>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  const loginSection = document.getElementById("loginSection");
+  const signupSection = document.getElementById("signupSection");
+  const formHeader = document.getElementById("formHeader");
+
+  // Show signup form
+  document.getElementById("signupLink").onclick = () => {
+    signupSection.classList.remove("hidden");
+    loginSection.classList.add("hidden");
+    formHeader.innerText = "Sign Up";
+  };
+
+  // Back to login
+  document.getElementById("backToLogin").onclick = () => {
+    signupSection.classList.add("hidden");
+    loginSection.classList.remove("hidden");
+    formHeader.innerText = "Login";
+  };
+
+  // Customer/Vendor toggle
+  let loginMode = "customer";
+  document.getElementById("custLoginBtn").onclick = () => {
+    loginMode = "customer";
+    document.getElementById("custLoginBtn").classList.add("active");
+    document.getElementById("vendLoginBtn").classList.remove("active");
+  };
+  document.getElementById("vendLoginBtn").onclick = () => {
+    loginMode = "vendor";
+    document.getElementById("vendLoginBtn").classList.add("active");
+    document.getElementById("custLoginBtn").classList.remove("active");
+  };
+
+  // Local Storage functions
+  const getUsers = (type) => JSON.parse(localStorage.getItem(type)) || [];
+  const saveUsers = (type, data) => localStorage.setItem(type, JSON.stringify(data));
+
+  // Signup
+  document.getElementById("signupSubmit").onclick = () => {
+    const email = signupEmail.value.trim();
+    const pass = signupPassword.value.trim();
+    const type = signupType.value;
+
+    const error = document.getElementById("signup-error");
+    const success = document.getElementById("signup-success");
+    error.classList.add("hidden"); success.classList.add("hidden");
+
+    if (!email || !pass) {
+      error.innerText = "Please fill all fields";
+      error.classList.remove("hidden");
+      return;
+    }
+
+    const users = getUsers(type);
+    if (users.some(u => u.email === email)) {
+      error.innerText = "Account already exists";
+      error.classList.remove("hidden");
+      return;
+    }
+
+    users.push({ email, password: pass });
+    saveUsers(type, users);
+
+    success.innerText = "Account created successfully!";
+    success.classList.remove("hidden");
+
+    signupEmail.value = "";
+    signupPassword.value = "";
+  };
+
+  // Login
+  document.getElementById("loginSubmit").onclick = () => {
+    const email = loginEmail.value.trim();
+    const pass = loginPassword.value.trim();
+
+    const error = document.getElementById("login-error");
+    error.classList.add("hidden");
+
+    const users = getUsers(loginMode);
+    const found = users.find(u => u.email === email && u.password === pass);
+
+    if (!found) {
+      error.innerText = "Invalid email or password";
+      error.classList.remove("hidden");
+      return;
+    }
+
+    sessionStorage.setItem("isLoggedIn", "true");
+    sessionStorage.setItem("userType", loginMode);
+    sessionStorage.setItem("email", email);
+
+    window.location.href = "pump-website.html";
+  };
+
+  // Forgot Password
+  document.getElementById("forgotPassword").onclick = () => {
+    let email = prompt("Enter your registered email:");
+    if (!email) return;
+
+    const customerUsers = getUsers("customer");
+    const vendorUsers = getUsers("vendor");
+
+    let user =
+      customerUsers.find(u => u.email === email) ||
+      vendorUsers.find(u => u.email === email);
+
+    if (user) {
+      alert(`Your password is: ${user.password}`);
+    } else {
+      alert("No account found with this email.");
+    }
+  };
+</script>
+</body>
+</html>
