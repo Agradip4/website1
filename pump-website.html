@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en" style="height: 100%;">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Smart Water Mine Pump Dashboard</title>
+  <link rel="stylesheet" href="style.css">
+
+  <!-- Google Translate -->
+  <script type="text/javascript">
+    function googleTranslateElementInit() {
+      new google.translate.TranslateElement({ pageLanguage: 'en' }, 'google_translate_element');
+    }
+  </script>
+  <script src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+</head>
+
+<body style="position: relative; min-height: 100%; top: 0px;">
+
+  <script>
+    // Authentication check - redirect to login if not logged in
+    if (sessionStorage.getItem('isLoggedIn') !== 'true') {
+        window.location.href = 'login.html';
+    }
+  </script>
+
+  <header>
+    <h1>💧 Smart Water Mine Pump Dashboard</h1>
+    <div id="clock-container">
+      <p id="clock">Sat, 15 Nov, 2025 | 09:48:37 am</p>
+    </div>
+    <button id="modeToggle">🌙 Dark Mode</button>
+    <button id="logoutBtn" style="margin-left: 15px; background: linear-gradient(135deg, #ff3366, #ff0000); color: white; border: none; padding: 0.7rem 1.5rem; border-radius: 8px; cursor: pointer; font-family: 'Rajdhani', sans-serif; font-weight: 700; font-size: 1rem; text-transform: uppercase; letter-spacing: 1px;">Logout</button>
+  </header>
+
+  <main class="dashboard">
+    <!-- Pump Control -->
+    <section class="card">
+      <h2>⚡ Pump Control</h2>
+      <div class="switch">
+        <input type="checkbox" id="pumpSwitch">
+        <label for="pumpSwitch"></label>
+      </div>
+      <p id="pumpStatus" style="color: red;">STANDBY</p>
+    </section>
+
+    <!-- Pump Status -->
+    <section class="card">
+      <h2>📊 Pump Status</h2>
+      <p id="pumpStatusIndicator"><span class="dot off" id="statusDot"></span> <span id="pumpStatusText">OFF</span></p>
+      <p>Runtime: <span id="runtime">0:00:00</span></p>
+    </section>
+
+    <!-- Water Level -->
+    <section class="card">
+      <h2>💧 Water Level</h2>
+      <div class="water-bar">
+        <div class="water-fill" style="height: 60%;"></div>
+      </div>
+      <p class="water-text">60%</p>
+    </section>
+
+    <!-- Live Flow Rate -->
+    <section class="card">
+      <h2>🌊 Live Flow Rate</h2>
+      <div class="circle">6<br><span>L/min</span></div>
+    </section>
+
+    <!-- Data History & Trends - UPDATED WITH MULTIPLE CHARTS -->
+    <section class="card chart-card chart-card-centered">
+      <h2>📈 Data History & Trends</h2>
+      
+      <!-- Time Range Buttons -->
+      <div class="chart-controls">
+        <div class="metric-buttons"></div>
+        <div class="time-buttons">
+          <button class="time-btn" data-time="1h">Last Hour</button>
+          <button class="time-btn active" data-time="24h">24 Hours</button>
+          <button class="time-btn" data-time="7d">7 Days</button>
+          <button class="time-btn" data-time="30d">30 Days</button>
+        </div>
+      </div>
+      
+      <!-- Chart Wrapper with Navigation -->
+      <div class="chart-wrapper" style="position: relative;">
+        <!-- Navigation Arrows -->
+        <button id="chartArrowLeft" class="chart-arrow chart-arrow-left" style="position: absolute; left: -60px; top: 50%; transform: translateY(-50%); z-index: 100;">◀</button>
+        <button id="chartArrowRight" class="chart-arrow chart-arrow-right" style="position: absolute; right: -60px; top: 50%; transform: translateY(-50%); z-index: 100;">▶</button>
+        
+        <!-- Chart Area for Swipe Detection -->
+        <div class="chart-area" style="position: relative; overflow: hidden;">
+          <!-- Chart 1: Water Level + Flow Rate -->
+          <div class="chart-container" style="display: block;">
+            <div class="chart-title">Water Level & Flow Rate</div>
+            <canvas id="dataChart"></canvas>
+          </div>
+          
+          <!-- Chart 2: Battery Level -->
+          <div class="battery-chart-container" style="display: none;">
+            <div class="chart-title">Battery Level History</div>
+            <canvas id="batteryChart"></canvas>
+          </div>
+          
+          <!-- Chart 3: Solar Power -->
+          <div class="solar-chart-container" style="display: none;">
+            <div class="chart-title">Solar Power History</div>
+            <canvas id="solarChart"></canvas>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Chart Indicators (Dots) -->
+      <div class="chart-indicators" style="display: flex; justify-content: center; gap: 10px; margin-top: 20px;">
+        <div class="chart-indicator active" data-chart="0"></div>
+        <div class="chart-indicator" data-chart="1"></div>
+        <div class="chart-indicator" data-chart="2"></div>
+      </div>
+    </section>
+
+    <!-- System Health -->
+    <section class="card full-width">
+      <h2>🔋 System Health & Environment</h2>
+      <div class="health-grid">
+        <div class="health-item">
+          <span class="health-label">🔋 Battery</span>
+          <span id="battery" class="health-value">89%</span>
+          <span id="batteryStatus" class="health-status">Active</span>
+        </div>
+        <div class="health-item">
+          <span class="health-label">☀️ Solar Efficiency</span>
+          <span id="solar" class="health-value">100%</span>
+        </div>
+        <div class="health-item">
+          <span class="health-label">🌡️ Weather</span>
+          <span id="weather" class="health-value">24.0°C</span>
+        </div>
+        <div class="health-item">
+          <span class="health-label">💨 Dust Level</span>
+          <span id="dustLevel" class="health-value">0%</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- AI Insights -->
+    <section class="card centered-card" id="aiInsights">
+      <h2>🤖 AI Insights & Action Center</h2>
+      <div id="alertBox">
+        <div class="ok-status">✅ All systems normal</div>
+      </div>
+      <div id="aiAlert" class="ai-alert hidden"></div>
+      <div class="ai-switch">
+        <label for="aiWaterLimit">Limit Water to 40%</label>
+        <div class="switch">
+          <input type="checkbox" id="aiWaterLimit">
+          <label for="aiWaterLimit"></label>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Voice Command -->
+  <button id="voiceBtn">🎤</button>
+  <p id="voiceStatus">Click mic & speak: "Turn on pump"</p>
+
+  <!-- Google Translate Element (Hidden) -->
+  <div class="google" id="google_translate_element"></div>
+
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+
+  <!-- Firebase Config -->
+  <script src="firebase.js"></script>
+
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <!-- Main JS -->
+  <script type="module" src="script.js"></script>
+
+  
+</body>
+
+</html>
